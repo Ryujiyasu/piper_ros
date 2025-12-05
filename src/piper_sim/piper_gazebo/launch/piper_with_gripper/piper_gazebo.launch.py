@@ -1,6 +1,8 @@
 import os
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, RegisterEventHandler
+from launch.actions import RegisterEventHandler
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -18,22 +20,27 @@ def generate_launch_description():
     package_name = 'piper_description'
     urdf_name = "piper_description_gazebo.xacro"
 
-    pkg_share = FindPackageShare(package=package_name).find(package_name) 
+    pkg_share = FindPackageShare(package=package_name).find(package_name)
     urdf_model_path = os.path.join(pkg_share, f'urdf/{urdf_name}')
+    empty_world = '/usr/local/share/gz/gz-sim9/worlds/empty.sdf'
+    world_name = 'empty'
 
-    # Start Gazebo server
-    start_gazebo_cmd =  ExecuteProcess(
-        cmd=['gazebo', '--verbose','-s', 'libgazebo_ros_init.so', '-s', 'libgazebo_ros_factory.so'],
-        output='screen')
+    gz_sim_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                FindPackageShare(package='ros_gz_sim').find('ros_gz_sim'),
+                'launch',
+                'gz_sim.launch.py',
+            )
+        ),
+        launch_arguments={'gz_args': f'-r -v 2 {empty_world}'}.items(),
+    )
 
+    # Render xacro with Gazebo Sim-specific plugins
+    doc = xacro.process_file(urdf_model_path, mappings={'use_gz': 'true'})
+    robot_description_xml = remove_comments(doc.toxml())
+    params = {'robot_description': robot_description_xml}
 
-    # 因为 urdf文件中有一句 $(find mybot) 需要用xacro进行编译一下才行
-    xacro_file = urdf_model_path
-    doc = xacro.parse(open(xacro_file))
-    xacro.process_doc(doc)
-    params = {'robot_description': remove_comments(doc.toxml())}
-
-    # 启动了robot_state_publisher节点后，该节点会发布 robot_description 话题，话题内容是模型文件urdf的内容？
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -41,34 +48,43 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Launch the robot, 通过robot_description话题进行模型内容获取从而在gazebo中生成模型
     spawn_entity_cmd = Node(
-        package='gazebo_ros', 
-        executable='spawn_entity.py',
-        arguments=['-entity', robot_name_in_model,  '-topic', 'robot_description'], output='screen')
+        package='ros_gz_sim',
+        executable='create',
+        output='screen',
+        parameters=[{
+            'world': world_name,
+            'string': robot_description_xml,
+            'name': robot_name_in_model,
+            'allow_renaming': False,
+        }],
+    )
 
-    # 关节状态发布器
-    load_joint_state_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
-             'joint_state_broadcaster'],
+    load_joint_state_controller = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['joint_state_broadcaster', '--controller-manager', '/controller_manager'],
         output='screen'
     )
 
-    load_joint_trajectory_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 
-             'arm_controller'],
+    load_joint_trajectory_controller = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['arm_controller', '--controller-manager', '/controller_manager'],
         output='screen'
         )
 
-    load_gripper_trajectory_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 
-             'gripper_controller'],
+    load_gripper_trajectory_controller = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['gripper_controller', '--controller-manager', '/controller_manager'],
         output='screen'
         )
     
-    load_gripper8_trajectory_controller = ExecuteProcess(
-        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active', 
-             'gripper8_controller'],
+    load_gripper8_trajectory_controller = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['gripper8_controller', '--controller-manager', '/controller_manager'],
         output='screen'
         )
 
@@ -98,8 +114,8 @@ def generate_launch_description():
 
     ld.add_action(close_evt1)
     ld.add_action(close_evt2)
+    ld.add_action(gz_sim_launch)
     ld.add_action(node_gripper_mirror_controller)
-    ld.add_action(start_gazebo_cmd)
     ld.add_action(node_robot_state_publisher)
     ld.add_action(spawn_entity_cmd)
 

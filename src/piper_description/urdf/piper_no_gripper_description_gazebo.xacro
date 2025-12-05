@@ -2,6 +2,8 @@
 <robot
   name="piper"
   xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:arg name="use_gz" default="true"/>
+  <xacro:property name="use_gz" value="$(arg use_gz)"/>
 <!-- world -->
   <link name="world"/>
   <joint name="fixed_base_joint" type="fixed">
@@ -365,7 +367,12 @@
 
   <ros2_control name="GazeboSystem" type="system">
       <hardware>
-          <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+          <xacro:if value="${use_gz}">
+              <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+          </xacro:if>
+          <xacro:unless value="${use_gz}">
+              <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+          </xacro:unless>
       </hardware>
       <joint name="joint1">
           <command_interface name="position">
@@ -429,12 +436,22 @@
       </joint>
   </ros2_control>
 
-<!-- gazebo -->
-  <gazebo>
-    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
-        <parameters> $(find piper_gazebo)/config/ros2_no_gripper_controllers.yaml </parameters>
-        <robot_param_node>robot_state_publisher</robot_param_node>
-    </plugin>
-  </gazebo>
+<!-- gazebo / gz -->
+  <xacro:if value="${use_gz}">
+    <gazebo>
+      <plugin name="gz_ros2_control::GazeboSimROS2ControlPlugin" filename="libgz_ros2_control-system.so">
+          <parameters> $(find piper_gazebo)/config/ros2_no_gripper_controllers.yaml </parameters>
+          <robot_param>robot_description</robot_param>
+      </plugin>
+    </gazebo>
+  </xacro:if>
+  <xacro:unless value="${use_gz}">
+    <gazebo>
+      <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+          <parameters> $(find piper_gazebo)/config/ros2_no_gripper_controllers.yaml </parameters>
+          <robot_param_node>robot_state_publisher</robot_param_node>
+      </plugin>
+    </gazebo>
+  </xacro:unless>
  
 </robot>
