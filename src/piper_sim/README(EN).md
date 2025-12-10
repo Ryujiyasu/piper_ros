@@ -38,6 +38,19 @@ ros2 launch piper_gazebo piper_no_gripper_gazebo.launch.py
 
 **Note:** If controlling via MoveIt, you must start Gazebo first, then MoveIt. Also, use `piper_moveit.launch.py` instead of `demo.launch.py`.
 
+### 1.3 Gazebo with an Orbbec camera (optional)
+
+Example (default parent is `link6`; tweak xyz/rpy to match your mount):
+
+```bash
+ros2 launch piper_gazebo piper_gazebo.launch.py \
+  use_orbbec_camera:=true \
+  orbbec_parent_link:=link6 \
+  orbbec_xyz:="0 0 0.12" \
+  orbbec_rpy:="0 0 0" \
+  orbbec_mesh_dir:=package://orbbec_description/meshes/gemini2/
+```
+
 ## 2 Mujoco Simulation
 
 ### 2.1 Installing Mujoco 2.1.0 and mujoco-py

@@ -4,6 +4,12 @@
   xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:arg name="use_gz" default="true"/>
   <xacro:property name="use_gz" value="$(arg use_gz)"/>
+  <xacro:arg name="use_orbbec_camera" default="false"/>
+  <xacro:arg name="orbbec_parent_link" default="link6"/>
+  <xacro:arg name="orbbec_xyz" default="0 0 0.12"/>
+  <xacro:arg name="orbbec_rpy" default="0 0 0"/>
+  <xacro:arg name="orbbec_mesh_dir" default="file://$(find orbbec_description)/meshes/gemini2/"/>
+  <xacro:include filename="$(find piper_description)/urdf/orbbec_gemini2_macro.xacro"/>
 <!-- world -->
   <link name="world"/>
   <joint name="fixed_base_joint" type="fixed">
@@ -538,6 +544,14 @@
   <gazebo reference="link8">
       <material>Gazebo/Orange</material>
   </gazebo> -->
+
+  <xacro:if value="$(arg use_orbbec_camera)">
+    <xacro:orbbec_gemini2
+      parent_link="$(arg orbbec_parent_link)"
+      xyz="$(arg orbbec_xyz)"
+      rpy="$(arg orbbec_rpy)"
+      mesh_dir="$(arg orbbec_mesh_dir)"/>
+  </xacro:if>
 
   <ros2_control name="GazeboSystem" type="system">
       <hardware>

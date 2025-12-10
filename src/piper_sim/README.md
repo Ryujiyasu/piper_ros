@@ -38,6 +38,19 @@ ros2 launch piper_gazebo piper_no_gripper_gazebo.launch.py
 
 注：**若通过moveit控制时需要先启动gazebo，再启动moveit，并且使用piper_moveit.launch.py而不是demo.launch.py**
 
+### 1.3 gazebo仿真中挂载Orbbec相机（可选）
+
+示例命令（默认挂在`link6`，可以根据安装位置调整xyz/rpy）：
+
+```bash
+ros2 launch piper_gazebo piper_gazebo.launch.py \\
+  use_orbbec_camera:=true \\
+  orbbec_parent_link:=link6 \\
+  orbbec_xyz:="0 0 0.12" \\
+  orbbec_rpy:="0 0 0" \\
+  orbbec_mesh_dir:=package://orbbec_description/meshes/gemini2/
+```
+
 ## 2 mujoco仿真
 
 ### 2.1 mujoco210和mujoco-py的安装
