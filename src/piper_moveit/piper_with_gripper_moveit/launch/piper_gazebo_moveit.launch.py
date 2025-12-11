@@ -14,7 +14,7 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
         DeclareLaunchArgument(
             'use_orbbec_camera',
-            default_value='false',
+            default_value='true',
             description='Attach the Orbbec camera model in simulation'),
     ]
 
