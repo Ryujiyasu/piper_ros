@@ -1,0 +1,104 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <world name="straw6d">
+    <physics name="1ms" type="ignored">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1.0</real_time_factor>
+    </physics>
+    <plugin
+      filename="gz-sim-physics-system"
+      name="gz::sim::systems::Physics">
+    </plugin>
+    <plugin
+      filename="gz-sim-user-commands-system"
+      name="gz::sim::systems::UserCommands">
+    </plugin>
+    <plugin
+      filename="gz-sim-scene-broadcaster-system"
+      name="gz::sim::systems::SceneBroadcaster">
+    </plugin>
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>100 100</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <include>
+      <name>bed_0</name>
+      <uri>model://bed</uri>
+      <pose>0.5 0 -0.45 0 0 1.57</pose>
+    </include>
+
+    <include>
+      <name>strawberry_plant_0</name>
+      <uri>model://random_strawberry_plant</uri>
+      <pose>0.5658789294405662 -1.0004201434415758 0.0 0 0 0.694628691202294</pose>
+    </include>
+
+    <include>
+      <name>strawberry_plant_1</name>
+      <uri>model://random_strawberry_plant</uri>
+      <pose>0.45676656533009746 -0.5634629637804226 0.0 0 0 5.89993882941555</pose>
+    </include>
+
+    <include>
+      <name>strawberry_plant_2</name>
+      <uri>model://random_strawberry_plant</uri>
+      <pose>0.48670067167745945 -0.04906822430787794 0.0 0 0 4.73933284744291</pose>
+    </include>
+
+    <include>
+      <name>strawberry_plant_3</name>
+      <uri>model://random_strawberry_plant</uri>
+      <pose>0.4902872659566059 0.41627297738099045 0.0 0 0 0.7698805757076338</pose>
+    </include>
+
+    <include>
+      <name>strawberry_plant_4</name>
+      <uri>model://random_strawberry_plant</uri>
+      <pose>0.5307136794542128 0.9920971605846034 0.0 0 0 3.2813281784122728</pose>
+    </include>
+
+  </world>
+</sdf>

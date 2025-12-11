@@ -32,27 +32,18 @@ def generate_launch_description():
         os.path.join(pkg_share, 'meshes'),
         os.path.join(
             FindPackageShare(package='orbbec_description').find('orbbec_description'),
-            'meshes',
+            '..',
         ),
+        os.path.join(gazebo_pkg_share, 'models'),
     ]
 
-    gz_sim_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(
-                FindPackageShare(package='ros_gz_sim').find('ros_gz_sim'),
-                'launch',
-                'gz_sim.launch.py',
-            )
-        ),
-        launch_arguments={'gz_args': f'-r -v 2 {empty_world}'}.items(),
-    )
-
-    default_orbbec_mesh_dir = os.path.join(
-        FindPackageShare(package='orbbec_description').find('orbbec_description'),
-        'meshes',
-        'gemini2')
+    default_orbbec_mesh_dir = 'package://orbbec_description/meshes/gemini2'
 
     declared_arguments = [
+        DeclareLaunchArgument(
+            'world',
+            default_value='empty',
+            description='World name to load (e.g. empty, strawberry_field).'),
         DeclareLaunchArgument(
             'use_sim_time',
             default_value='true',
@@ -94,6 +85,22 @@ def generate_launch_description():
             'orbbec_mesh_dir': LaunchConfiguration('orbbec_mesh_dir').perform(context),
         }
 
+        world_name_arg = LaunchConfiguration('world').perform(context)
+        world_file_path = os.path.join(gazebo_pkg_share, 'worlds', f'{world_name_arg}.sdf')
+
+        gz_sim_launch = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(
+                    FindPackageShare(package='ros_gz_sim').find('ros_gz_sim'),
+                    'launch',
+                    'gz_sim.launch.py',
+                )
+            ),
+            # launch_arguments={'gz_args': f'-r -v 2 {world_file_path}'}.items(),
+            # Using -v 4 for more debug if needed, but keeping -v 2.
+            launch_arguments={'gz_args': f'-r -v 2 {world_file_path}'}.items(),
+        )
+
         doc = xacro.process_file(urdf_model_path, mappings=mappings)
         robot_description_xml = remove_comments(doc.toxml())
         params = {'robot_description': robot_description_xml}
@@ -110,7 +117,7 @@ def generate_launch_description():
             executable='create',
             output='screen',
             parameters=[{
-                'world': world_name,
+                'world': world_name_arg,
                 'string': robot_description_xml,
                 'name': robot_name_in_model,
                 'allow_renaming': False,

@@ -34,11 +34,17 @@ You can customize the launch by appending arguments:
 | `orbbec_parent_link` | `link6` | Link to attach the camera to. |
 | `orbbec_xyz` | `-0.05 0.025 0` | XYZ offset of the camera mount. |
 | `orbbec_rpy` | `0 -1.57 0` | Rotation (Roll/Pitch/Yaw) of the camera mount. |
-| `use_sim_time` | `true` | Use simulation time (Required for Gazebo). |
+| `orbbec_mesh_dir` | (path) | Directory containing camera meshes. |
+| `world` | `empty` | World to load: `empty` or `strawberry_field`. |
 
-**Example:** Launch without camera:
+**Example 1:** Launch without camera:
 ```bash
 ros2 launch piper_with_gripper_moveit piper_gazebo_moveit.launch.py use_orbbec_camera:=false
+```
+
+**Example 2:** Launch Strawberry Harvesting World:
+```bash
+ros2 launch piper_with_gripper_moveit piper_gazebo_moveit.launch.py world:=strawberry_field
 ```
 
 ## 3. Operating the Robot (RViz)

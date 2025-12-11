@@ -16,6 +16,10 @@ def generate_launch_description():
             'use_orbbec_camera',
             default_value='true',
             description='Attach the Orbbec camera model in simulation'),
+        DeclareLaunchArgument(
+            'world',
+            default_value='empty',
+            description='World name to load (e.g. empty, strawberry_field).'),
     ]
 
     def launch_setup(context, *args, **kwargs):
@@ -36,6 +40,7 @@ def generate_launch_description():
             launch_arguments={
                 'use_orbbec_camera': LaunchConfiguration('use_orbbec_camera'),
                 'use_sim_time': use_sim_time,
+                'world': LaunchConfiguration('world'),
             }.items()
         )
 
