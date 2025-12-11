@@ -50,12 +50,16 @@ def generate_launch_description():
     default_orbbec_mesh_dir = os.path.join(
         FindPackageShare(package='orbbec_description').find('orbbec_description'),
         'meshes',
-        'gemini2') + '/'
+        'gemini2')
 
     declared_arguments = [
         DeclareLaunchArgument(
+            'use_sim_time',
+            default_value='true',
+            description='Use simulation (Gazebo) clock if true'),
+        DeclareLaunchArgument(
             'use_orbbec_camera',
-            default_value='false',
+            default_value='true',
             description='Attach the Orbbec camera model to the wrist in simulation.',
         ),
         DeclareLaunchArgument(
@@ -97,7 +101,7 @@ def generate_launch_description():
         node_robot_state_publisher = Node(
             package='robot_state_publisher',
             executable='robot_state_publisher',
-            parameters=[{'use_sim_time': True}, params, {"publish_frequency": 15.0}],
+            parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}, params, {"publish_frequency": 15.0}],
             output='screen'
         )
 
@@ -117,6 +121,7 @@ def generate_launch_description():
             package='controller_manager',
             executable='spawner',
             arguments=['joint_state_broadcaster', '--controller-manager', '/controller_manager'],
+            parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
             output='screen'
         )
 
@@ -124,22 +129,25 @@ def generate_launch_description():
             package='controller_manager',
             executable='spawner',
             arguments=['arm_controller', '--controller-manager', '/controller_manager'],
+            parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
             output='screen'
             )
 
-        load_gripper_trajectory_controller = Node(
-            package='controller_manager',
-            executable='spawner',
-            arguments=['gripper_controller', '--controller-manager', '/controller_manager'],
-            output='screen'
-            )
+        # load_gripper_trajectory_controller = Node(
+        #     package='controller_manager',
+        #     executable='spawner',
+        #     arguments=['gripper_controller', '--controller-manager', '/controller_manager'],
+        #     parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
+        #     output='screen'
+        #     )
         
-        load_gripper8_trajectory_controller = Node(
-            package='controller_manager',
-            executable='spawner',
-            arguments=['gripper8_controller', '--controller-manager', '/controller_manager'],
-            output='screen'
-            )
+        # load_gripper8_trajectory_controller = Node(
+        #     package='controller_manager',
+        #     executable='spawner',
+        #     arguments=['gripper8_controller', '--controller-manager', '/controller_manager'],
+        #     parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
+        #     output='screen'
+        #     )
 
         close_evt1 = RegisterEventHandler(
             event_handler=OnProcessExit(
@@ -153,8 +161,9 @@ def generate_launch_description():
                 target_action=load_joint_state_controller,
                 on_exit=[
                     load_joint_trajectory_controller,
-                    load_gripper_trajectory_controller,
-                    load_gripper8_trajectory_controller],
+                    # load_gripper_trajectory_controller,
+                    # load_gripper8_trajectory_controller
+                    ],
             )
         )
 
@@ -169,6 +178,7 @@ def generate_launch_description():
             '/orbbec/rgb/camera_info@sensor_msgs/msg/CameraInfo@ignition.msgs.CameraInfo',
             '/orbbec/depth/image@sensor_msgs/msg/Image@ignition.msgs.Image',
             '/orbbec/depth/camera_info@sensor_msgs/msg/CameraInfo@ignition.msgs.CameraInfo',
+            '/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock',
         ]
 
         bridge_cmd = ExecuteProcess(

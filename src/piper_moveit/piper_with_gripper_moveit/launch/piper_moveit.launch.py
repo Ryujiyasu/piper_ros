@@ -63,11 +63,13 @@ def my_generate_move_group_launch(ld, moveit_config):
         "publish_state_updates": should_publish,
         "publish_transforms_updates": should_publish,
         "monitor_dynamics": False,
+        "start_state_max_bounds_error": 0.1,
     }
 
     move_group_params = [
         moveit_config.to_dict(),
         move_group_configuration,
+        moveit_config.trajectory_execution,
     ]
     move_group_params.append({"use_sim_time": True})
 

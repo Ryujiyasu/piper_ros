@@ -59,4 +59,5 @@
     <disable_collisions link1="link6" link2="link7" reason="Never"/>
     <disable_collisions link1="link6" link2="link8" reason="Never"/>
     <disable_collisions link1="link7" link2="link8" reason="Default"/>
+    <disable_collisions link1="base_link" link2="gripper_base" reason="Default"/>
 </robot>

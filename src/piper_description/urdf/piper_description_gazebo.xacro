@@ -142,7 +142,7 @@
     <axis
       xyz="0 0 1" />
     <limit
-      lower="0"
+      lower="-0.01"
       upper="3.14"
       effort="100"
       velocity="5" />
@@ -184,7 +184,6 @@
     <origin
       xyz="0.28503 0 0"
       rpy="0 0 -1.7939" />
-      <!-- rpy="0 0 -1.759-0.03490659" /> -->
     <parent
       link="link2" />
     <child
@@ -193,7 +192,7 @@
       xyz="0 0 1" />
     <limit
       lower="-2.967"
-      upper="0"
+      upper="0.01"
       effort="100"
       velocity="5" />
   </joint>
@@ -563,83 +562,43 @@
           </xacro:unless>
       </hardware>
       <joint name="joint1">
-          <command_interface name="position">
-              <param name="min">-1</param>
-              <param name="max">1</param>
-          </command_interface>
-          <state_interface name="position">
-              <param name="initial_value">0.0</param>
-          </state_interface>
+          <command_interface name="position"/>
+          <state_interface name="position"/>
           <state_interface name="velocity"/>
       </joint>
       <joint name="joint2">
-          <command_interface name="position">
-              <param name="min">-1</param>
-              <param name="max">1</param>
-          </command_interface>
-          <state_interface name="position">
-              <param name="initial_value">0.0</param>
-          </state_interface>
+          <command_interface name="position"/>
+          <state_interface name="position"/>
           <state_interface name="velocity"/>
       </joint>
       <joint name="joint3">
-          <command_interface name="position">
-              <param name="min">-1</param>
-              <param name="max">1</param>
-          </command_interface>
-          <state_interface name="position">
-              <param name="initial_value">0.0</param>
-          </state_interface>
+          <command_interface name="position"/>
+          <state_interface name="position"/>
           <state_interface name="velocity"/>
       </joint>
       <joint name="joint4">
-          <command_interface name="position">
-              <param name="min">-1</param>
-              <param name="max">1</param>
-          </command_interface>
-          <state_interface name="position">
-              <param name="initial_value">0.0</param>
-          </state_interface>
+          <command_interface name="position"/>
+          <state_interface name="position"/>
           <state_interface name="velocity"/>
       </joint>
       <joint name="joint5">
-          <command_interface name="position">
-              <param name="min">-1</param>
-              <param name="max">1</param>
-          </command_interface>
-          <state_interface name="position">
-              <param name="initial_value">0.0</param>
-          </state_interface>
+          <command_interface name="position"/>
+          <state_interface name="position"/>
           <state_interface name="velocity"/>
       </joint>
       <joint name="joint6">
-          <command_interface name="position">
-              <param name="min">-1</param>
-              <param name="max">1</param>
-          </command_interface>
-          <state_interface name="position">
-              <param name="initial_value">0.0</param>
-          </state_interface>
+          <command_interface name="position"/>
+          <state_interface name="position"/>
           <state_interface name="velocity"/>
       </joint>
       <joint name="joint7">
-          <command_interface name="position">
-              <param name="min">-1</param>
-              <param name="max">1</param>
-          </command_interface>
-          <state_interface name="position">
-              <param name="initial_value">0.0</param>
-          </state_interface>
+          <command_interface name="position"/>
+          <state_interface name="position"/>
           <state_interface name="velocity"/>
       </joint>
       <joint name="joint8">
-          <command_interface name="position">
-              <param name="min">-1</param>
-              <param name="max">1</param>
-          </command_interface>
-          <state_interface name="position">
-              <param name="initial_value">0.0</param>
-          </state_interface>
+          <command_interface name="position"/>
+          <state_interface name="position"/>
           <state_interface name="velocity"/>
       </joint>
   </ros2_control>
